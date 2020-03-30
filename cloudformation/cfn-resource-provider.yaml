@@ -1,4 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
 Description: CloudFormation Custom PostgreSQL User Provider
 Parameters:
   VPC:
@@ -55,17 +56,12 @@ Resources:
               Service:
                 - lambda.amazonaws.com
   CFNDBUserProvider:
-    Type: AWS::Lambda::Function
+    Type: AWS::Serverless::Function
     DependsOn:
       - LambdaRole
     Properties:
       Description: CloudFormation Custom:PostgreSQLUser implementation
-      Code:
-        S3Bucket: !If
-          - UsePublicBucket
-          - !Sub 'binxio-public-${AWS::Region}'
-          - !Ref 'LambdaS3Bucket'
-        S3Key: lambdas/cfn-postgresql-user-provider-0.5.9.zip
+      CodeUri: ../src/
       VpcConfig:
         SecurityGroupIds:
           - !Ref 'SecurityGroup'
